@@ -88,5 +88,11 @@ export function createCarousel({ content = [] }) {
     // Initialize dot display
     updateDots();
 
+    // Cycle every 5 seconds
+    setInterval(() => {
+        currentImg = (currentImg + 1) % content.length;
+        slide({ index: currentImg });
+    }, 5000);
+
     return container;
 }

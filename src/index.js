@@ -8,15 +8,15 @@ const carousel = createCarousel({
     content: [
         {
             imgPath: image.bird,
-            caption: '1',
+            caption: 'Beautiful Bird',
         },
         {
             imgPath: image.bird2,
-            caption: '2',
+            caption: 'Another Bird',
         },
         {
             imgPath: image.bird3,
-            caption: '3',
+            caption: 'Magnificent Bird',
         },
     ],
 });

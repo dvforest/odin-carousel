@@ -8,8 +8,8 @@ export function createCarousel({ content = [] }) {
     let currentImg = 0;
 
     // Image track elements
-    const images = content.map((item) => {
-        return createEl('div', {
+    const images = content.map((item) =>
+        createEl('div', {
             classes: ['carousel-image-item'],
             children: [
                 createEl('img', {
@@ -20,8 +20,8 @@ export function createCarousel({ content = [] }) {
                     text: item.caption,
                 }),
             ],
-        });
-    });
+        }),
+    );
     const track = createEl('div', {
         classes: ['carousel-image-track'],
         children: images,
@@ -29,27 +29,51 @@ export function createCarousel({ content = [] }) {
 
     // Navigation elements
     const prevArrow = createEl('img', {
-        classes: ['carousel-nav-arrow'],
+        classes: ['carousel-nav-arrow', 'carousel-nav-left'],
         attrs: { src: icon.arrowPrev },
     });
     const nextArrow = createEl('img', {
-        classes: ['carousel-nav-arrow'],
+        classes: ['carousel-nav-arrow', 'carousel-nav-right'],
         attrs: { src: icon.arrowNext },
+    });
+    let dots = content.map((item) =>
+        createEl('div', {
+            classes: ['carousel-nav-dot'],
+        }),
+    );
+    const imageIndicator = createEl('div', {
+        classes: ['carousel-nav-indicator'],
+        children: dots,
     });
     const nav = createEl('div', {
         classes: ['carousel-nav-wrapper'],
-        children: [prevArrow, nextArrow],
+        children: [prevArrow, nextArrow, imageIndicator],
     });
     const container = createEl('div', {
         classes: ['carousel-container'],
         children: [track, nav],
     });
 
-    // Navigation events
+    // Add event listeners
     prevArrow.addEventListener('click', () => slide({ offset: -1 }));
     nextArrow.addEventListener('click', () => slide({ offset: 1 }));
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            slide({ index });
+            updateDots();
+        });
+    });
 
-    // Function to slide to the supplied index, or by an index-based offset (-1 to go to previous image).
+    // Function to update the indicator dots display
+    function updateDots() {
+        // Turn all dots inactive
+        dots.forEach((dot) => dot.classList.toggle('active', false));
+
+        // Activate the dot matching the current image
+        dots[currentImg].classList.toggle('active', true);
+    }
+
+    // Function to slide to the supplied index, or by an index-based offset (-1 to go to previous image)
     function slide({ index, offset = 0 } = {}) {
         const target = index ?? currentImg + offset;
         if (target >= 0 && target < content.length) {
@@ -58,7 +82,11 @@ export function createCarousel({ content = [] }) {
             const translate = imageWidth * target;
             track.style.transform = `translateX(-${translate}px)`;
         }
+        updateDots();
     }
+
+    // Initialize dot display
+    updateDots();
 
     return container;
 }
